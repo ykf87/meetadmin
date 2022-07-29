@@ -28,8 +28,8 @@ class ClientUserController extends AdminController
         $grid->model()->orderByDesc('id');
 
 
-        $grid->column('id', __('编号'))->hide()->sortable();
-        $grid->column('pid', __('推荐人ID'))->sortable()->filter();
+        $grid->column('id', __('编号'))->sortable();
+        $grid->column('pid', __('推荐人ID'))->sortable()->filter()->editable();
         $grid->column('invite', __('邀请码'))->filter();
         // $table->column('chain', __('Chain'));
         $grid->column('account', __('用户名'))->filter('like')->hide();
@@ -72,6 +72,18 @@ class ClientUserController extends AdminController
         // $table->column('md5', __('Md5'));
         $grid->column('private', __('私密账号'))->hide();
 
+
+        $grid->disableCreateButton();
+        $grid->disableExport();
+        $grid->disableRowSelector();
+        $grid->actions(function ($actions) {
+            // 去掉删除
+            $actions->disableDelete();
+            // 去掉编辑
+            $actions->disableEdit();
+            // 去掉查看
+            $actions->disableView();
+        });
         return $grid;
     }
 
@@ -85,45 +97,45 @@ class ClientUserController extends AdminController
     {
         $show = new Show(UCUser::findOrFail($id));
 
-        $show->field('id', __('Id'));
-        $show->field('pid', __('Pid'));
-        $show->field('invite', __('Invite'));
-        $show->field('chain', __('Chain'));
-        $show->field('account', __('Account'));
-        $show->field('mail', __('Mail'));
-        $show->field('phone', __('Phone'));
-        $show->field('mailvery', __('Mailvery'));
-        $show->field('phonevery', __('Phonevery'));
-        $show->field('pwd', __('Pwd'));
-        $show->field('nickname', __('Nickname'));
-        $show->field('avatar', __('Avatar'));
-        $show->field('background', __('Background'));
-        $show->field('signature', __('Signature'));
-        $show->field('visits', __('Visits'));
-        $show->field('addtime', __('Addtime'));
-        $show->field('status', __('Status'));
-        $show->field('sex', __('Sex'));
-        $show->field('height', __('Height'));
-        $show->field('weight', __('Weight'));
-        $show->field('birth', __('Birth'));
-        $show->field('age', __('Age'));
-        $show->field('job', __('Job'));
-        $show->field('income', __('Income'));
-        $show->field('emotion', __('Emotion'));
-        $show->field('constellation', __('Constellation'));
-        $show->field('edu', __('Edu'));
-        $show->field('temperament', __('Temperament'));
-        $show->field('ip', __('Ip'));
-        $show->field('country', __('Country'));
-        $show->field('province', __('Province'));
-        $show->field('city', __('City'));
-        $show->field('singleid', __('Singleid'));
-        $show->field('lang', __('Lang'));
-        $show->field('currency', __('Currency'));
-        $show->field('timezone', __('Timezone'));
-        $show->field('platform', __('Platform'));
-        $show->field('md5', __('Md5'));
-        $show->field('private', __('Private'));
+        // $show->field('id', __('Id'));
+        // $show->field('pid', __('Pid'));
+        // $show->field('invite', __('Invite'));
+        // $show->field('chain', __('Chain'));
+        // $show->field('account', __('Account'));
+        // $show->field('mail', __('Mail'));
+        // $show->field('phone', __('Phone'));
+        // $show->field('mailvery', __('Mailvery'));
+        // $show->field('phonevery', __('Phonevery'));
+        // $show->field('pwd', __('Pwd'));
+        // $show->field('nickname', __('Nickname'));
+        // $show->field('avatar', __('Avatar'));
+        // $show->field('background', __('Background'));
+        // $show->field('signature', __('Signature'));
+        // $show->field('visits', __('Visits'));
+        // $show->field('addtime', __('Addtime'));
+        // $show->field('status', __('Status'));
+        // $show->field('sex', __('Sex'));
+        // $show->field('height', __('Height'));
+        // $show->field('weight', __('Weight'));
+        // $show->field('birth', __('Birth'));
+        // $show->field('age', __('Age'));
+        // $show->field('job', __('Job'));
+        // $show->field('income', __('Income'));
+        // $show->field('emotion', __('Emotion'));
+        // $show->field('constellation', __('Constellation'));
+        // $show->field('edu', __('Edu'));
+        // $show->field('temperament', __('Temperament'));
+        // $show->field('ip', __('Ip'));
+        // $show->field('country', __('Country'));
+        // $show->field('province', __('Province'));
+        // $show->field('city', __('City'));
+        // $show->field('singleid', __('Singleid'));
+        // $show->field('lang', __('Lang'));
+        // $show->field('currency', __('Currency'));
+        // $show->field('timezone', __('Timezone'));
+        // $show->field('platform', __('Platform'));
+        // $show->field('md5', __('Md5'));
+        // $show->field('private', __('Private'));
 
         return $show;
     }
