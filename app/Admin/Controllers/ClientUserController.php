@@ -52,7 +52,12 @@ class ClientUserController extends AdminController
         $grid->column('sex', __('性别'));
         $grid->column('height', __('身高'))->hide();
         $grid->column('weight', __('体重'))->hide();
-        $grid->column('birth', __('生日'));
+        $grid->column('birth', __('生日'))->display(function($val){
+            if($val > 0){
+                return date('Y-m-d H:i:s');
+            }
+            return null;
+        });
         // $table->column('age', __('Age'));
         $grid->column('job', __('工作'))->hide();
         $grid->column('income', __('收入'))->hide();
