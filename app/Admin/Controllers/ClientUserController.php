@@ -3,10 +3,10 @@
 namespace App\Admin\Controllers;
 
 use App\Models\UCUser;
+use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
-use Encore\Admin\Http\Controllers\AdminController;
+use Encore\Admin\Grid;
 use Encore\Admin\Show;
-use Encore\Admin\Table;
 
 class ClientUserController extends AdminController
 {
@@ -18,56 +18,61 @@ class ClientUserController extends AdminController
     protected $title = '用户管理';
 
     /**
-     * Make a table builder.
+     * Make a grid builder.
      *
-     * @return Table
+     * @return Grid
      */
-    protected function table()
+    protected function grid()
     {
-        $table = new Table(new UCUser());
-        $table->model()->orderByDesc('id');
+        $grid = new Grid(new UCUser());
+        $grid->model()->orderByDesc('id');
 
-        $table->column('id', __('编号'))->hide()->sortable();
-        $table->column('pid', __('推荐人ID'))->hide();
-        $table->column('invite', __('邀请码'))->filter();
+
+        $grid->column('id', __('编号'))->hide()->sortable();
+        $grid->column('pid', __('推荐人ID'))->sortable()->filter();
+        $grid->column('invite', __('邀请码'))->filter();
         // $table->column('chain', __('Chain'));
-        $table->column('account', __('用户名'))->filter('like')->hide();
-        $table->column('mail', __('邮箱地址'))->filter('like');
-        $table->column('phone', __('电话'))->filter('like');
-        $table->column('mailvery', __('邮箱是否认证'))->hide();
-        $table->column('phonevery', __('手机是否认证'))->hide();
+        $grid->column('account', __('用户名'))->filter('like')->hide();
+        $grid->column('mail', __('邮箱地址'))->filter('like');
+        $grid->column('phone', __('电话'))->filter('like');
+        $grid->column('mailvery', __('邮箱是否认证'))->hide();
+        $grid->column('phonevery', __('手机是否认证'))->hide();
         // $table->column('pwd', __('Pwd'));
-        $table->column('nickname', __('昵称'))->filter('like');
-        $table->column('avatar', __('头像'))->image();
+        $grid->column('nickname', __('昵称'))->filter('like');
+        $grid->column('avatar', __('头像'))->display(function($val){
+            return $val ? '<img src="https://media.friskymeets.net/'.$val.'" style="max-width:50px;max-height:50px;" />' : '';
+        });
         // $table->column('background', __('Background'));
-        $table->column('signature', __('签名'))->hide();
-        $table->column('visits', __('访问量'))->hide()->sortable();
-        $table->column('addtime', __('注册时间'))->sortable()->filter('range');
-        $table->column('status', __('状态'));
-        $table->column('sex', __('性别'));
-        $table->column('height', __('身高'))->hide();
-        $table->column('weight', __('体重'))->hide();
-        $table->column('birth', __('生日'));
+        $grid->column('signature', __('签名'))->hide();
+        $grid->column('visits', __('访问量'))->hide()->sortable();
+        $grid->column('addtime', __('注册时间'))->sortable()->filter('range')->display(function($val){
+            return $val ? date('Y-m-d H:i:s', $val) : null;
+        });
+        $grid->column('status', __('状态'));
+        $grid->column('sex', __('性别'));
+        $grid->column('height', __('身高'))->hide();
+        $grid->column('weight', __('体重'))->hide();
+        $grid->column('birth', __('生日'));
         // $table->column('age', __('Age'));
-        $table->column('job', __('工作'))->hide();
-        $table->column('income', __('收入'))->hide();
-        $table->column('emotion', __('情感状态'))->hide();
-        $table->column('constellation', __('星座'))->hide();
-        $table->column('edu', __('教育程度'))->hide();
-        $table->column('temperament', __('性格'))->hide();
+        $grid->column('job', __('工作'))->hide();
+        $grid->column('income', __('收入'))->hide();
+        $grid->column('emotion', __('情感状态'))->hide();
+        $grid->column('constellation', __('星座'))->hide();
+        $grid->column('edu', __('教育程度'))->hide();
+        $grid->column('temperament', __('性格'))->hide();
         // $table->column('ip', __('Ip'));
-        $table->column('country', __('国家'));
-        $table->column('province', __('城市'))->hide();
+        $grid->column('country', __('国家'));
+        $grid->column('province', __('城市'))->hide();
         // $table->column('city', __('City'));
         // $table->column('singleid', __('Singleid'));
-        $table->column('lang', __('语言'))->hide();
-        $table->column('currency', __('货币'))->hide();
-        $table->column('timezone', __('时区'))->hide();
-        $table->column('platform', __('平台'))->hide();
+        $grid->column('lang', __('语言'))->hide();
+        $grid->column('currency', __('货币'))->hide();
+        $grid->column('timezone', __('时区'))->hide();
+        $grid->column('platform', __('平台'))->hide();
         // $table->column('md5', __('Md5'));
-        $table->column('private', __('私密账号'))->hide();
+        $grid->column('private', __('私密账号'))->hide();
 
-        return $table;
+        return $grid;
     }
 
     /**

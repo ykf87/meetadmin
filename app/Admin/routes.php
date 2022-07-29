@@ -12,5 +12,5 @@ Route::group([
 ], function (Router $router) {
 
     $router->get('/', 'HomeController@index')->name('home');
-
+    $router->resource('u-c-users', ClientUserController::class);
 });
