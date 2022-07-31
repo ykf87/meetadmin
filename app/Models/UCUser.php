@@ -10,6 +10,30 @@ class UCUser extends Model{
     public $timestamps = false;
 	protected $connection 	= 'ucenter';
 	protected $table 		= 'users';
+	public static $sex 		= [
+		'未知',
+		'男',
+		'女',
+		'变性'
+	];
+	public static $sex_label 	= [
+		'default',
+		'info',
+		'danger',
+		'default'
+	];
+	public static $status 	= [
+		-2 			=> '封号',
+		-1			=> '注销',
+		0 			=> '未激活',
+		1 			=> '正常'
+	];
+	public static $status_label 	= [
+		-2 			=> 'danger',
+		-1			=> 'warning',
+		0 			=> 'info',
+		1 			=> 'success'
+	];
 
 	public function getPidAttribute($val){
 		if($val > 0){

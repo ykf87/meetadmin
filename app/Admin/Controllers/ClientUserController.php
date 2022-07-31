@@ -3,10 +3,13 @@
 namespace App\Admin\Controllers;
 
 use App\Models\UCUser;
+use App\Models\Country;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+
+use App\Admin\Actions\Post\Title;
 
 class ClientUserController extends AdminController
 {
@@ -27,6 +30,7 @@ class ClientUserController extends AdminController
         $grid = new Grid(new UCUser());
         $grid->model()->orderByDesc('id');
 
+        $country       = Country::pluck('name', 'id')->toArray();
 
         $grid->column('id', __('编号'))->sortable();
         $grid->column('pid', __('推荐人ID'))->sortable()->filter()->editable();
@@ -48,8 +52,8 @@ class ClientUserController extends AdminController
         $grid->column('addtime', __('注册时间'))->sortable()->filter('range')->display(function($val){
             return $val ? date('Y-m-d H:i:s', $val) : null;
         });
-        $grid->column('status', __('状态'));
-        $grid->column('sex', __('性别'));
+        $grid->column('status', __('状态'))->using(UCUser::$status)->label(UCUser::$status_label)->filter(UCUser::$status);
+        $grid->column('sex', __('性别'))->using(UCUser::$sex)->label(UCUser::$sex_label)->filter(UCUser::$sex);
         $grid->column('height', __('身高'))->hide();
         $grid->column('weight', __('体重'))->hide();
         $grid->column('birth', __('生日'))->display(function($val){
@@ -57,7 +61,7 @@ class ClientUserController extends AdminController
                 return date('Y-m-d H:i:s');
             }
             return null;
-        });
+        })->sortable()->filter('range');
         // $table->column('age', __('Age'));
         $grid->column('job', __('工作'))->hide();
         $grid->column('income', __('收入'))->hide();
@@ -66,7 +70,7 @@ class ClientUserController extends AdminController
         $grid->column('edu', __('教育程度'))->hide();
         $grid->column('temperament', __('性格'))->hide();
         // $table->column('ip', __('Ip'));
-        $grid->column('country', __('国家'));
+        $grid->column('country', __('国家'))->filter($country)->using($country);
         $grid->column('province', __('城市'))->hide();
         // $table->column('city', __('City'));
         // $table->column('singleid', __('Singleid'));
@@ -88,7 +92,10 @@ class ClientUserController extends AdminController
             $actions->disableEdit();
             // 去掉查看
             $actions->disableView();
+
+            $actions->add(new Title);
         });
+
         return $grid;
     }
 
