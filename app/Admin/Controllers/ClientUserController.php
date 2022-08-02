@@ -10,6 +10,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 
 use App\Admin\Actions\Post\Title;
+use App\Admin\Actions\Post\UnTitle;
 
 class ClientUserController extends AdminController
 {
@@ -58,7 +59,7 @@ class ClientUserController extends AdminController
         $grid->column('weight', __('体重'))->hide();
         $grid->column('birth', __('生日'))->display(function($val){
             if($val > 0){
-                return date('Y-m-d H:i:s');
+                return date('Y-m-d', $val);
             }
             return null;
         })->sortable()->filter('range');
@@ -94,6 +95,7 @@ class ClientUserController extends AdminController
             $actions->disableView();
 
             $actions->add(new Title);
+            $actions->add(new UnTitle);
         });
 
         return $grid;
