@@ -11,6 +11,10 @@ use Encore\Admin\Show;
 
 use App\Admin\Actions\Post\Title;
 use App\Admin\Actions\Post\UnTitle;
+use App\Admin\Actions\Post\Recharge;
+use App\Admin\Actions\Post\Chargebacks;
+use App\Admin\Modals\Recharges;
+use App\Admin\Modals\Used;
 
 class ClientUserController extends AdminController
 {
@@ -62,7 +66,11 @@ class ClientUserController extends AdminController
                 return date('Y-m-d', $val);
             }
             return null;
-        })->sortable()->filter('range');
+        })->sortable()->filter('range')->hide();
+        $grid->column('recharges', '总充值')->modal('充值记录', Recharges::class)->sortable();
+        $grid->column('used', __('总消费'))->modal('消费记录', Used::class)->sortable();
+        // $grid->expand('used', __('总消费'))->sortable();
+        $grid->column('balance', __('余额'))->sortable();
         // $table->column('age', __('Age'));
         $grid->column('job', __('工作'))->hide();
         $grid->column('income', __('收入'))->hide();
@@ -96,6 +104,8 @@ class ClientUserController extends AdminController
 
             $actions->add(new Title);
             $actions->add(new UnTitle);
+            $actions->add(new Recharge);
+            $actions->add(new Chargebacks);
         });
 
         return $grid;
