@@ -91,7 +91,7 @@ class ClientUserController extends AdminController
         $grid->column('private', __('私密账号'))->hide();
         $grid->column('ip', __('ipv4'))->display(function($val){
             return long2ip($val);
-        })->hide();
+        })->filter('like')->hide();
 
 
         $grid->disableCreateButton();
