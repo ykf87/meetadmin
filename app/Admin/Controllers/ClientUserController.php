@@ -89,6 +89,9 @@ class ClientUserController extends AdminController
         $grid->column('platform', __('平台'))->hide();
         // $table->column('md5', __('Md5'));
         $grid->column('private', __('私密账号'))->hide();
+        $grid->column('ip', __('ipv4'))->display(function($val){
+            return long2ip($val);
+        })->hide();
 
 
         $grid->disableCreateButton();
