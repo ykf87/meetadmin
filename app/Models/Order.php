@@ -51,6 +51,7 @@ class Order extends Model{
 		$order->status 	= 1;
 		$order->pay_way	= 3;
 		$order->paytime = $order->addtime;
+		$order->mail 	= $user->mail;
 
 		if($order->save()){
 			return true;
