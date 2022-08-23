@@ -14,4 +14,6 @@ Route::group([
     $router->get('/', 'HomeController@index')->name('home');
     $router->resource('u-c-users', ClientUserController::class);
     $router->resource('orders', OrderController::class);
+    $router->resource('consumes', ConsumeControllers::class);
+    $router->resource('settlements', SettlementControllers::class);
 });

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Consume;
 
 class UCUser extends Model{
 	use HasFactory;
@@ -34,6 +35,14 @@ class UCUser extends Model{
 		0 			=> 'info',
 		1 			=> 'success'
 	];
+	public static $customer 	= [
+		0 		=> '普通用户',
+		1 		=> '客服号'
+	];
+	public static $customer_label 	= [
+		0 		=> 'default',
+		1 		=> 'success'
+	];
 
 	public function getPidAttribute($val){
 		if($val > 0){
@@ -59,5 +68,10 @@ class UCUser extends Model{
 		}
 		$this->attributes['pid'] 		= $val;
 		$this->attributes['chain']		= $chain ? $chain . ',' . $val : $val;
+	}
+
+	public function useds(){
+		return $this->belongsTo(Consume::class, 'id', 'uid');
+		// return $this->hasMany(Consume::class, 'foreign_key', 'local_key');
 	}
 }

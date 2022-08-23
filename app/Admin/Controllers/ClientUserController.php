@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Models\UCUser;
 use App\Models\Country;
+use App\Models\Consume;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -13,8 +14,10 @@ use App\Admin\Actions\Post\Title;
 use App\Admin\Actions\Post\UnTitle;
 use App\Admin\Actions\Post\Recharge;
 use App\Admin\Actions\Post\Chargebacks;
+use App\Admin\Actions\Post\Settlement;
 use App\Admin\Modals\Recharges;
 use App\Admin\Modals\Used;
+use Encore\Admin\Widgets\Table;
 
 class ClientUserController extends AdminController
 {
@@ -38,27 +41,23 @@ class ClientUserController extends AdminController
         $country       = Country::pluck('name', 'id')->toArray();
 
         $grid->column('id', __('编号'))->sortable();
+        $grid->column('avatar', __('头像'))->display(function($val){
+            return $val ? '<img src="https://media.friskymeets.net/'.$val.'" style="max-width:50px;max-height:50px;" />' : '';
+        });
         $grid->column('pid', __('推荐人ID'))->sortable()->filter()->editable();
         $grid->column('invite', __('邀请码'))->filter();
         // $table->column('chain', __('Chain'));
         $grid->column('account', __('用户名'))->filter('like')->hide();
         $grid->column('mail', __('邮箱地址'))->filter('like');
         $grid->column('phone', __('电话'))->filter('like');
+        $grid->column('sex', __('性别'))->using(UCUser::$sex)->label(UCUser::$sex_label)->filter(UCUser::$sex);
         $grid->column('mailvery', __('邮箱是否认证'))->hide();
         $grid->column('phonevery', __('手机是否认证'))->hide();
         // $table->column('pwd', __('Pwd'));
         $grid->column('nickname', __('昵称'))->filter('like');
-        $grid->column('avatar', __('头像'))->display(function($val){
-            return $val ? '<img src="https://media.friskymeets.net/'.$val.'" style="max-width:50px;max-height:50px;" />' : '';
-        });
         // $table->column('background', __('Background'));
         $grid->column('signature', __('签名'))->hide();
         $grid->column('visits', __('访问量'))->hide()->sortable();
-        $grid->column('addtime', __('注册时间'))->sortable()->filter('range')->display(function($val){
-            return $val ? date('Y-m-d H:i:s', $val) : null;
-        });
-        $grid->column('status', __('状态'))->using(UCUser::$status)->label(UCUser::$status_label)->filter(UCUser::$status);
-        $grid->column('sex', __('性别'))->using(UCUser::$sex)->label(UCUser::$sex_label)->filter(UCUser::$sex);
         $grid->column('height', __('身高'))->hide();
         $grid->column('weight', __('体重'))->hide();
         $grid->column('birth', __('生日'))->display(function($val){
@@ -67,10 +66,33 @@ class ClientUserController extends AdminController
             }
             return null;
         })->sortable()->filter('range')->hide();
-        $grid->column('recharges', '总充值')->modal('充值记录', Recharges::class)->sortable();
-        $grid->column('used', __('总消费'))->modal('消费记录', Used::class)->sortable();
-        // $grid->expand('used', __('总消费'))->sortable();
-        $grid->column('balance', __('余额'))->sortable();
+        $grid->column('recharge', '充值(美金)')->modal('充值记录', Recharges::class)->sortable();
+        // $grid->column('used', __('消费(金币)'))->modal('消费记录', Used::class)->sortable();
+        $grid->column('used', __('消费(金币)'))->expand(function ($model) {
+            if($this->customer == 1){
+                $comments   = $model->useds()->where('id', '>', $model->settlement)->get()->map(function ($comment) {
+                    return $comment->only(['connect_id', 'voice', 'usetime', 'cost']);
+                });
+                $comments   = $comments->toArray();
+                $totals     = 0;
+                $timers     = 0;
+                foreach($comments as &$item){
+                    $voice              = $item['voice'];
+                    $item['voice']      = Consume::$voice[$item['voice']] ?? null;
+                    $item['voice']      = '<span class="label label-'.Consume::$voicelabel[$voice].'">' . $item['voice'] . '</span>';
+                    $totals             += $item['cost'];
+                    $timers             += $item['usetime'];
+                }
+                $comments[]             = ['', '', '总时长: ' . $timers, '总消耗: '.$totals];
+
+                return new Table(['对方id', '类型', '待结算时长(秒)', '待结算金币'], $comments); 
+            }else{
+                return '<center>不是客服号!</center>';
+            }
+            
+        })->sortable();
+
+        $grid->column('balance', __('余额(金币)'))->display(function($val){return intval($val);})->sortable();
         // $table->column('age', __('Age'));
         $grid->column('job', __('工作'))->hide();
         $grid->column('income', __('收入'))->hide();
@@ -93,6 +115,16 @@ class ClientUserController extends AdminController
             return long2ip($val);
         })->filter('like')->hide();
 
+        $states = [
+            'on'  => ['value' => 1, 'text' => '是', 'color' => 'primary'],
+            'off' => ['value' => 0, 'text' => '否', 'color' => 'default'],
+        ];
+        $grid->column('customer', __('客服号'))->switch($states)->hide();
+        $grid->column('addtime', __('注册时间'))->sortable()->filter('range')->display(function($val){
+            return $val ? date('Y-m-d H:i:s', $val) : null;
+        });
+        $grid->column('status', __('状态'))->using(UCUser::$status)->label(UCUser::$status_label)->filter(UCUser::$status);
+
 
         $grid->disableCreateButton();
         $grid->disableExport();
@@ -109,6 +141,10 @@ class ClientUserController extends AdminController
             $actions->add(new UnTitle);
             $actions->add(new Recharge);
             $actions->add(new Chargebacks);
+            if($actions->getAttribute('customer') == 1){
+                // $actions->setResource('<li class="divider"></li>');
+                $actions->add(new Settlement);
+            }
         });
 
         return $grid;
@@ -214,6 +250,7 @@ class ClientUserController extends AdminController
         $form->switch('platform', __('Platform'));
         $form->text('md5', __('Md5'));
         $form->switch('private', __('Private'));
+        $form->switch('customer', __('Customer'));
 
         return $form;
     }
