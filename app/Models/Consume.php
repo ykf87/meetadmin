@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Encore\Admin\Facades\Admin;
+use App\Models\Order;
 
 class Consume extends Model{
 	use HasFactory;
@@ -28,7 +29,7 @@ class Consume extends Model{
 		$order 				= new self;
 		$order->uid 		= $user->id;
 		$order->connect_id	= Admin::user()->id;
-		$order->voice 		= 1;
+		$order->voice 		= 3;
 		$order->start 		= time();
 		$order->uptime		= $order->start;
 		$order->end			= $order->start;
@@ -38,6 +39,10 @@ class Consume extends Model{
 		$order->status 		= 1;
 
 		if($order->save()){
+			$user->recharge 	= Order::where('uid', $user->id)->sum('amount');
+			$user->used 		= self::where('uid', $user->id)->sum('cost');
+			$user->balance 		= Order::where('uid', $user->id)->sum('bi') - $user->used;
+			$user->save();
 			return true;
 		}else{
 			return '扣费失败!';
