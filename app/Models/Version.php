@@ -22,7 +22,7 @@ class Version extends Model{
         if($val && strpos($val, '-')){
             $val        = strtotime($val);
         }
-        $this->attributes['uptime']   = $val;
+        $this->attributes['uptime']   = (int)$val;
     }
 
     public function getAddtimeAttribute($val){
