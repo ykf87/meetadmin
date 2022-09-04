@@ -66,6 +66,9 @@ class ClientUserController extends AdminController
             }
             return null;
         })->sortable()->filter('range')->hide();
+        $grid->column('realuser', __('实名'))->display(function($val){
+            return $val ? '<img src="https://media.friskymeets.net/'.$val.'" style="max-width:50px;max-height:50px;" />' : '';
+        })->hide();
         $grid->column('recharge', '充值(美金)')->modal('充值记录', Recharges::class)->sortable();
         // $grid->column('used', __('消费(金币)'))->modal('消费记录', Used::class)->sortable();
         $grid->column('used', __('消费(金币)'))->expand(function ($model) {
