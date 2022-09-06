@@ -14,6 +14,7 @@ use App\Admin\Actions\Post\Title;
 use App\Admin\Actions\Post\UnTitle;
 use App\Admin\Actions\Post\Recharge;
 use App\Admin\Actions\Post\Chargebacks;
+use App\Admin\Actions\Post\Repassword;
 use App\Admin\Actions\Post\Settlement;
 use App\Admin\Modals\Recharges;
 use App\Admin\Modals\Used;
@@ -40,7 +41,7 @@ class ClientUserController extends AdminController
         $grid = new Grid(new UCUser());
         $grid->model()->orderByDesc('id');
         Admin::js('/layer/layer.js');
-        Admin::style('.dropdown-menu {max-height: 78vh;overflow-y: scroll;}');
+        Admin::style('.column-country .dropdown-menu {max-height: 78vh;overflow-y: scroll;}');
         Admin::script('$("table img").click(function(){layer.open({type:1,area:["auto"],shadeClose:true,closeBtn:false,title:false,content:"<img src=\""+$(this).attr("src")+"\" style=\"max-width:80vw;max-height:80vh;\""});});');
 
         $country            = Country::pluck('name', 'id')->toArray();
@@ -160,6 +161,7 @@ class ClientUserController extends AdminController
                 // $actions->setResource('<li class="divider"></li>');
                 $actions->add(new Settlement);
             }
+            $actions->add(new Repassword);
         });
 
         return $grid;
