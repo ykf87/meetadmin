@@ -19,6 +19,7 @@ use App\Admin\Modals\Recharges;
 use App\Admin\Modals\Used;
 use Encore\Admin\Widgets\Table;
 use Illuminate\Support\Facades\Storage;
+use Encore\Admin\Admin;
 
 class ClientUserController extends AdminController
 {
@@ -38,9 +39,12 @@ class ClientUserController extends AdminController
     {
         $grid = new Grid(new UCUser());
         $grid->model()->orderByDesc('id');
+        Admin::js('/layer/layer.js');
+        Admin::style('.dropdown-menu {max-height: 78vh;overflow-y: scroll;}');
+        Admin::script('$("table img").click(function(){layer.open({type:1,area:["auto"],shadeClose:true,closeBtn:false,title:false,content:"<img src=\""+$(this).attr("src")+"\" style=\"max-width:80vw;max-height:80vh;\""});});');
 
-        $country       = Country::pluck('name', 'id')->toArray();
-
+        $country            = Country::pluck('name', 'id')->toArray();
+        UCUser::$countries  = $country;
         $grid->column('id', __('编号'))->sortable();
         $grid->column('avatar', __('头像'))->display(function($val){
             return $val ? '<img src="https://media.friskymeets.net/'.$val.'" style="max-width:50px;max-height:50px;" />' : '';
@@ -105,6 +109,7 @@ class ClientUserController extends AdminController
         $grid->column('edu', __('教育程度'))->hide();
         $grid->column('temperament', __('性格'))->hide();
         // $table->column('ip', __('Ip'));
+// dd($country);
         $grid->column('country', __('国家'))->filter($country)->using($country);
         $grid->column('province', __('城市'))->hide();
         // $table->column('city', __('City'));
@@ -113,9 +118,12 @@ class ClientUserController extends AdminController
         $grid->column('currency', __('货币'))->hide();
         $grid->column('timezone', __('时区'))->hide();
         $grid->column('platform', __('平台'))->hide();
-        $grid->column('realuser', __('实名'))->display(function($val){
-            return $val ? '<img src="https://media.friskymeets.net/'.$val.'" style="max-width:50px;max-height:50px;" />' : '';
-        })->hide();
+        // $grid->column('realuser', __('实名'))->display(function($val){
+        //     // if($val){
+        //     //     dd($val);
+        //     // }
+        //     return $val;
+        // })->hide();
         // $table->column('md5', __('Md5'));
         $grid->column('private', __('私密账号'))->hide();
         $grid->column('ip', __('ipv4'))->display(function($val){

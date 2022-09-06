@@ -8,6 +8,7 @@ use App\Models\Consume;
 
 class UCUser extends Model{
 	use HasFactory;
+	public static $countries 	= [];
     public $timestamps = false;
 	protected $connection 	= 'ucenter';
 	protected $table 		= 'users';
@@ -69,6 +70,18 @@ class UCUser extends Model{
 		$this->attributes['pid'] 		= $val;
 		$this->attributes['chain']		= $chain ? $chain . ',' . $val : $val;
 	}
+
+	// public function getCountryAttribute($val){
+	// 	return isset(self::countries[$val]) ? self::countries[$val] : $val;
+	// 	// return null;
+	// }
+	// public function setCountryAttribute($val){
+	// 	$tmp 	= array_flip(self::countries[$val]);
+	// 	$this->attributes['country'] 		= $val;
+	// 	$this->attributes['chain']		= $chain ? $chain . ',' . $val : $val;
+	// }
+
+
 
 	public function useds(){
 		return $this->belongsTo(Consume::class, 'id', 'uid');
