@@ -55,7 +55,7 @@ class ClientUserController extends AdminController
         $grid->column('account', __('用户名'))->filter('like')->hide();
         $grid->column('mail', __('邮箱地址'))->filter('like');
         $grid->column('phone', __('电话'))->filter('like');
-        $grid->column('sex', __('性别'))->using(UCUser::$sex)->label(UCUser::$sex_label)->filter(UCUser::$sex);
+        $grid->column('sex', __('性别'))->editable('select', [1=>'男',2=>'女'])->label(UCUser::$sex_label)->filter(UCUser::$sex);
         $grid->column('mailvery', __('邮箱是否认证'))->hide();
         $grid->column('phonevery', __('手机是否认证'))->hide();
         // $table->column('pwd', __('Pwd'));
