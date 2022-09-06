@@ -113,6 +113,9 @@ class ClientUserController extends AdminController
         $grid->column('currency', __('货币'))->hide();
         $grid->column('timezone', __('时区'))->hide();
         $grid->column('platform', __('平台'))->hide();
+        $grid->column('realuser', __('实名'))->display(function($val){
+            return $val ? '<img src="https://media.friskymeets.net/'.$val.'" style="max-width:50px;max-height:50px;" />' : '';
+        })->hide();
         // $table->column('md5', __('Md5'));
         $grid->column('private', __('私密账号'))->hide();
         $grid->column('ip', __('ipv4'))->display(function($val){
