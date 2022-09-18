@@ -17,4 +17,5 @@ Route::group([
     $router->resource('consumes', ConsumeControllers::class);
     $router->resource('settlements', SettlementControllers::class);
     $router->resource('versions', VersionController::class);
+    $router->resource('gifts', GiftControllers::class);
 });
