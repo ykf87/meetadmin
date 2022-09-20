@@ -18,4 +18,5 @@ Route::group([
     $router->resource('settlements', SettlementControllers::class);
     $router->resource('versions', VersionController::class);
     $router->resource('gifts', GiftControllers::class);
+    $router->resource('pay-programs', PayProgramController::class);
 });
